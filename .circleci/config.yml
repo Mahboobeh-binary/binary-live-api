@@ -52,7 +52,7 @@ commands:
       - run:
           name: "yarn build"
           command: yarn build
-    deploy:
+  deploy:
     description: "Deploy to static branches"
     parameters:
       target_branch:
