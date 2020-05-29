@@ -6,6 +6,7 @@
 
 This library is a high-level abstraction over the [Binary.com Websockets API](https://developers.binary.com)
 
+
 ## 
 
 ## Features
