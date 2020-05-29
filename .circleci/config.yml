@@ -72,7 +72,7 @@ commands:
             git config user.name "sysadmin-frontend-binary"
       - add_ssh_keys:
           fingerprints:
-            - "01:67:4a:6d:26:9c:70:c4:1a:60:91:88:d9:dd:f0:83"
+            - "36:12:ac:7f:08:13:86:22:dc:c7:ae:4e:d8:74:a5:8b"
       - run:
           name: Deploy docs to gh-pages branch
           command: gh-pages -d dist --branch << parameters.target_branch >> --message '[skip ci]'
