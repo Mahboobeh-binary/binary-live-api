@@ -1,5 +1,4 @@
 # binary-live-api
-
 [![Build Status](https://travis-ci.org/binary-com/binary-live-api.svg?branch=master)](https://travis-ci.org/binary-com/binary-live-api)
 
 [![Coverage Status](https://coveralls.io/repos/github/binary-com/binary-live-api/badge.svg?branch=master)](https://coveralls.io/github/binary-com/binary-live-api?branch=master)
