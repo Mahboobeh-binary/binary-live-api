@@ -63,7 +63,7 @@ commands:
           at: lib
       - run:
           name: Tag build
-          command: echo "<< parameters.target_branch >> $(date)" > lib/version
+          command: echo "<< parameters.target_branch >> $(date -u +'%Y-%m-%dT%H:%M:%SZ')" > lib/version
       - run:
           name: Install and configure dependencies
           command: |
@@ -90,7 +90,6 @@ commands:
             echo $DOCKERHUB_PASSWORD | docker login -u $DOCKERHUB_USERNAME --password-stdin
             docker push ${DOCKHUB_ORGANISATION}/binary-static-liveapi:${CIRCLE_SHA1}
             docker push ${DOCKHUB_ORGANISATION}/binary-static-liveapi:latest
-
   k8s_deploy:
     description: "Deploy to k8s cluster"
     steps:
@@ -113,8 +112,22 @@ commands:
                 kubectl --server=${KUBE_SERVER} --certificate-authority=ca.crt --token=$SERVICEACCOUNT_TOKEN set image deployment/liveapi-binary-com liveapi-binary-com=${DOCKHUB_ORGANISATION}/binary-static-liveapi:${CIRCLE_SHA1}
               fi
             done
-
+  notify_slack:
+    description: "Notify slack"
+    steps:
+      - slack/status:
+          include_project_field: false
+          failure_message: "Release failed for liveapi.binary.com with version *$(cat lib/version)*"
+          success_message: "Release succeeded for liveapi.binary.com with version *$(cat lib/version)*"
+          webhook: ${SLACK_WEBHOOK} 
 jobs:
+  build:
+    docker:
+      - image: circleci/node:8.10.0-stretch
+    steps:
+      - git_checkout_from_cache
+      - npm_install
+      - build
   release_production:
     docker:
       - image: circleci/node:8.10.0-stretch
@@ -124,7 +137,6 @@ jobs:
       - build
       - deploy:
           target_branch: "production"
-
   release_aws_production:
     docker:
       - image: circleci/node:9.9.0-stretch
@@ -136,6 +148,9 @@ jobs:
       - k8s_deploy 
       
 workflows:
+  build:
+     jobs:
+      - build
   release:
     jobs:
       - release_production:
@@ -149,6 +164,6 @@ workflows:
             branches:
               ignore: /.*/
             tags:
-              only: /^aws\-production.*/
+              only: /^production.*/
           context: binary-frontend-artifact-upload
 
