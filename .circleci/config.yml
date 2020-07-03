@@ -68,8 +68,8 @@ commands:
           name: Install and configure dependencies
           command: |
             sudo npm install -g gh-pages@2.0.1
-            git config user.email "sysadmin+frontend@deriv.com"
-            git config user.name "sysadmin-frontend-binary"
+            git config user.email "ci-build@binary.com"
+            git config user.name "ci-build"
       - add_ssh_keys:
           fingerprints:
             - "35:e7:65:b0:73:62:54:bb:33:f4:bf:a9:6d:41:89:62"
@@ -137,6 +137,7 @@ jobs:
       - build
       - deploy:
           target_branch: "production"
+      - notify_slack
   release_aws_production:
     docker:
       - image: circleci/node:9.9.0-stretch
@@ -146,6 +147,7 @@ jobs:
       - build
       - docker_build_push
       - k8s_deploy 
+      - notify_slack
       
 workflows:
   build:
